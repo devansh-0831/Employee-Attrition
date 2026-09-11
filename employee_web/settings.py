@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+CSRF_TRUSTED-ORIGINS = ['hearty-empathy-production-b29f.up.railway.app',]
 # Application definition
 
 INSTALLED_APPS = [
