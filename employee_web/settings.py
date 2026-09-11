@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED-ORIGINS = ['HTTPS://hearty-empathy-production-b29f.up.railway.app',]
+CSRF_TRUSTED-ORIGINS = ['https://hearty-empathy-production-b29f.up.railway.app',]
 # Application definition
 
 INSTALLED_APPS = [
