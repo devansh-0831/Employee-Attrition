@@ -7,7 +7,7 @@ import json
 from django.db.models import IntegerField
 from django.db.models.functions import Cast
 import joblib
-pipeline=joblib.load('ML_Models/employee_attrition_model.joblib')
+pipeline=joblib.load('employee_attrition_model.joblib')
 
 def Dashboards(request):
     #total_headcount
