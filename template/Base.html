@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Analytics AI</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+    <style>
+        .table>thead tr th {
+    background: #b1afaf36;
+}
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --header-bg: #0f172a;
+            --body-bg: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        .navbar {
+            background-color: var(--header-bg);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link {
+            color: #cbd5f5 !important;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+            color: #ffffff !important;
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-color);
+            color: #ffffff !important;
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.4);
+        }
+
+        /* MAIN CONTENT */
+        main {
+            padding-top: 90px; /* space for fixed header */
+            flex: 1;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
+        /* FOOTER */
+        .app-footer {
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- FIXED HEADER -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container-fluid px-4">
+
+        <!-- Brand -->
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'Dashboards' %}">
+            <i class="fa-solid fa-robot fa-lg text-primary me-2"></i>
+            AI Attrition System
+        </a>
+
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Right Tabs -->
+        <div class="collapse navbar-collapse justify-content-end" id="topNav">
+            <ul class="navbar-nav gap-2">
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'Dashboards' %}active{% endif %}"
+                       href="{% url 'Dashboards' %}">
+                        <i class="fa-solid fa-chart-line me-1"></i> Dashboard
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'AI Prediction' %}active{% endif %}"
+                       href="{% url 'AI Prediction' %}">
+                        <i class="fa-solid fa-brain me-1"></i> AI Prediction
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'Employees' %}active{% endif %}"
+                       href="{% url 'Employees' %}">
+                        <i class="fa-solid fa-users me-1"></i> Employees
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'Dept_Trends' %}active{% endif %}"
+                       href="{% url 'Dept_Trends' %}">
+                        <i class="fa-solid fa-arrow-trend-up me-1"></i> Dept Trends
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="container-fluid mb-4">
+    <div class="px-4">
+        {% block content %}
+        <!-- Page content here -->
+        {% endblock %}
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="app-footer">
+    <div class="container-fluid px-4">
+        <div class="row py-3 align-items-center">
+            <div class="col-md-12 text-center">
+                © 2026 AI Attrition System. All rights reserved.
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

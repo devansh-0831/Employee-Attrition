@@ -1,0 +1,265 @@
+{% extends 'Base.html' %}
+
+{% block content %}
+<!-- Load Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h4 class="fw-bold mb-1">Workforce Overview</h4>
+        <p class="text-muted">Real-time analytics and insights</p>
+    </div>
+</div>
+
+<!-- Modern KPI Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card h-100 p-3">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted small fw-bold text-uppercase mb-1">Total Headcount</p>
+                    <h4 class="fw-bold mb-0 text-dark">{{ Total_Headcount }}</h4>
+                </div>
+                <div class="icon-shape bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                    <i class="fa-solid fa-users fa-lg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 p-3">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted small fw-bold text-uppercase mb-1">Active Employees</p>
+                    <h4 class="fw-bold mb-0 text-success">{{ Active_Employees }}</h4>
+                </div>
+                <div class="icon-shape bg-success bg-opacity-10 text-success p-3 rounded-circle">
+                    <i class="fa-solid fa-user-check fa-lg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 p-3">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted small fw-bold text-uppercase mb-1">Terminated</p>
+                    <h4 class="fw-bold mb-0 text-danger">{{ Terminated }}</h4>
+                </div>
+                <div class="icon-shape bg-danger bg-opacity-10 text-danger p-3 rounded-circle">
+                    <i class="fa-solid fa-user-xmark fa-lg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 p-3">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted small fw-bold text-uppercase mb-1">Attrition Rate</p>
+                    <h4 class="fw-bold mb-0 text-warning">{{ Attrition_Rate }}%</h4>
+                </div>
+                <div class="icon-shape bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
+                    <i class="fa-solid fa-chart-pie fa-lg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Visualization Area -->
+<div class="row g-4">
+    <!-- Attrition by Department -->
+    <div class="col-md-12">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h6 class="fw-bold m-0">Top 10 Departments by Attrition</h6>
+                <!-- <i class="fa-solid fa-ellipsis text-muted"></i> -->
+            </div>
+            <div style="height: 350px;">
+                <canvas id="attritionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="col-md-5">
+        <div class="card p-4 h-100">
+            <h6 class="fw-bold mb-4">Demographics Breakdown</h6>
+            <div style="height: 300px; display: flex; justify-content: center;">
+                <canvas id="genderChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bar Chart -->
+    <div class="col-md-7">
+        <div class="card p-4 h-100">
+            <h6 class="fw-bold mb-4">Historical Trends (Active vs Terminated)</h6>
+            <div style="height: 300px;">
+                <canvas id="ageChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#64748b';
+
+    // Attrition by Department Chart
+    const ctx = document.getElementById('attritionChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ dept_labels|safe }},
+                datasets: [{
+                    label: 'Terminated Employees',
+                    data: {{ dept_values|safe }},
+                    backgroundColor: '#4361ee',
+                    borderRadius: 6,
+                    barThickness: 30
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { borderDash: [5, 5] }, border: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // Gender Pie Chart
+    const genderCtx = document.getElementById('genderChart');
+    if (genderCtx) {
+       // const genderData = JSON.parse('{{ gender_active_terminated|escapejs }}');
+       // const m_active = (genderData.Male && genderData.Male.active) || 0;
+       // const m_term = (genderData.Male && genderData.Male.terminated) || 0;
+       // const f_active = (genderData.Female && genderData.Female.active) || 0;
+       // const f_term = (genderData.Female && genderData.Female.terminated) || 0;
+
+        new Chart(genderCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Male Active', 'Male Terminated', 'Female Active', 'Female Terminated'],
+                datasets: [{
+                    data: [{{m_active}}, {{m_term}}, {{f_active}}, {{f_term}}],
+                    backgroundColor: ['#22c55e', '#ef4444', '#0ea5e9', '#f59e0b'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: { 
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: { 
+                    legend: { position: 'right', labels: { usePointStyle: true, padding: 20 } } 
+                }
+            }
+        });
+    }
+
+    // Terminations and Activations by Year
+
+     {% comment %} const yearCtx = document.getElementById('yearChart');
+    if (yearCtx) {
+        new Chart(yearCtx, {
+            type: 'line',
+            data: {
+                labels: {{ years_at_company |safe }},
+                datasets: [{
+                    label: 'Active Employees',
+                    data: {{ active_year_values|safe }},
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, 
+                {
+                    label: 'Terminated Employees',
+                    data: {{ terminated_year_values|safe }},
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }
+                ]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top', align: 'end' } },
+                scales: {
+                    y: { grid: { borderDash: [5, 5] }, border: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }  {% endcomment %}
+
+
+    // Age vs Attrition
+    const ageCtx = document.getElementById('ageChart');
+
+    if (ageCtx) {
+        new Chart(ageCtx, {
+            type: 'line',
+            data: {
+                labels: {{ age_labels|safe }},
+                datasets: [{
+                    label: 'Active Employees',
+                    data: {{ active_age_values|safe }},
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Terminated Employees',
+                    data: {{ terminated_age_values|safe }},
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            borderDash: [5, 5]
+                        },
+                        border: {
+                            display: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Age'
+                        }
+                    }
+                }
+            }
+        });
+    }
+     
+</script>
+{% endblock %}

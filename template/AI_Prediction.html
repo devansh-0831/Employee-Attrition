@@ -1,0 +1,145 @@
+{% extends 'Base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex align-items-center mb-4">
+            <div class="bg-white p-2 rounded-circle shadow-sm me-3">
+                <i class="fa-solid fa-wand-magic-sparkles fa-2x text-primary"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-1">AI Prediction Engine</h4>
+                <p class="text-muted m-0">Enter employee details to predict attrition risk.</p>
+            </div>
+        </div>
+
+        {% if prediction %}
+        <div class="card mb-4 border-0 shadow-sm overflow-hidden">
+            <div class="card-body p-0 d-flex">
+                <div class="p-4 d-flex align-items-center justify-content-center {% if prediction == 'High Risk' %}bg-danger{% else %}bg-success{% endif %} text-white" style="width:100px;">
+                    <i class="fa-solid {% if prediction == 'High Risk' %}fa-triangle-exclamation{% else %}fa-check-circle{% endif %} fa-3x"></i>
+                </div>
+                <div class="p-4 flex-grow-1 bg-white">
+                    <h4 class="fw-bold {% if prediction == 'High Risk' %}text-danger{% else %}text-success{% endif %}">
+                        {{ prediction }}
+                    </h4>
+                    <p class="mb-0 text-muted">
+                        Estimated probability of attrition:
+                        <strong class="text-dark">{{ probability }}%</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card p-5 border-0 shadow-lg">
+            <form method="POST">
+                {% csrf_token %}
+
+                <h5 class="fw-bold text-muted mb-4 text-uppercase small">Employee Information</h5>
+
+                <div class="row g-4">
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Age</label>
+                        <input type="number" name="age" class="form-control" required min="18" max="100" placeholder="e.g. 35" value="{{ selected_values.age|default:'' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Monthly Income</label>
+                        <input type="number" name="monthly_income" class="form-control" required min="0" placeholder="e.g. 5000" value="{{ selected_values.monthly_income|default:'' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Hourly Rate</label>
+                        <input type="number" name="hourly_rate" class="form-control" required min="1" placeholder="e.g. 65" value="{{ selected_values.hourly_rate|default:'' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Distance From Home</label>
+                        <input type="number" name="distance_from_home" class="form-control" required min="0" placeholder="e.g. 10" value="{{ selected_values.distance_from_home|default:'' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Years At Company</label>
+                        <input type="number" name="years_at_company" class="form-control" required min="0" max="60" placeholder="e.g. 5" value="{{ selected_values.years_at_company|default:'' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Total Working Years</label>
+                        <input type="number" name="total_working_years" class="form-control" required min="0" max="60" placeholder="e.g. 10" value="{{ selected_values.total_working_years|default:'' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Years In Current Role</label>
+                        <input type="number" name="years_in_current_role" class="form-control" required min="0" max="60" placeholder="e.g. 3" value="{{ selected_values.years_in_current_role|default:'' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Years With Current Manager</label>
+                        <input type="number" name="years_with_curr_manager" class="form-control" required min="0" max="60" placeholder="e.g. 2" value="{{ selected_values.years_with_curr_manager|default:'' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Stock Option Level</label>
+                        <select name="stock_option_level" class="form-select" required>
+                            <option value="">Select level</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Percent Salary Hike</label>
+                        <input type="number" name="percent_salary_hike" class="form-control" required min="1" max="100" placeholder="e.g. 15" value="{{ selected_values.percent_salary_hike|default:'' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Overtime</label>
+                        <select name="overtime" class="form-select" required>
+                            <option value="">Select overtime</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Job Role</label>
+                        <select name="job_role" class="form-select" required>
+                            <option value="">Select job role</option>
+                            <option value="Sales Executive">Sales Executive</option>
+                            <option value="Research Scientist">Research Scientist</option>
+                            <option value="Laboratory Technician">Laboratory Technician</option>
+                            <option value="Manufacturing Director">Manufacturing Director</option>
+                            <option value="Healthcare Representative">Healthcare Representative</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Sales Representative">Sales Representative</option>
+                            <option value="Research Director">Research Director</option>
+                            <option value="Human Resources">Human Resources</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Marital Status</label>
+                        <select name="marital_status" class="form-select" required>
+                            <option value="">Select status</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Divorced">Divorced</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="mt-5 text-end">
+                    <button type="submit" class="btn btn-primary btn-lg px-4 shadow-sm">
+                        <i class="fa-solid fa-bolt me-2"></i>Run Prediction
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
